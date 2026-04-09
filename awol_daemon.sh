@@ -6,7 +6,7 @@ set -u
 echo "Starting AWOL AWDL Daemon (Root Enabled Fix)..."
 
 log stream --predicate 'subsystem == "com.apple.universalcontrol"' --style syslog | while read -r line; do
-    if echo "$line" | grep -qiE "CWFInterface XPC connection invalidated|WiFi monitoring stopped|DeviceLost"; then
+    if echo "$line" | grep -qiE "CWFInterface XPC connection invalidated|WiFi monitoring stopped|DeviceLost|P2PStream Canceled|P2PDirectLink Canceled"; then
         echo "$(date) - [CRITICAL] AWDL/Universal Control Network Panic Detected!"
         
         # Soft SIGHUP Reconnect...
