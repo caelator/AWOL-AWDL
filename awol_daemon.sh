@@ -5,8 +5,16 @@ set -u
 
 echo "Starting AWOL AWDL Daemon (Root Enabled Fix)..."
 
+LAST_PANIC_TIME=0
+
 log stream --predicate 'subsystem == "com.apple.universalcontrol"' --style syslog | while read -r line; do
     if echo "$line" | grep -qiE "CWFInterface XPC connection invalidated|WiFi monitoring stopped|DeviceLost|P2PStream Canceled|P2PDirectLink Canceled"; then
+        CURRENT_TIME=$(date +%s)
+        if (( CURRENT_TIME - LAST_PANIC_TIME < 20 )); then
+            continue
+        fi
+        LAST_PANIC_TIME=$CURRENT_TIME
+        
         echo "$(date) - [CRITICAL] AWDL/Universal Control Network Panic Detected!"
         
         # Soft SIGHUP Reconnect...
