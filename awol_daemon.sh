@@ -8,7 +8,7 @@ echo "Starting AWOL AWDL Daemon (Root Enabled Fix)..."
 LAST_PANIC_TIME=0
 
 log stream --predicate 'subsystem == "com.apple.universalcontrol"' --style syslog | while read -r line; do
-    if echo "$line" | grep -qiE "CWFInterface XPC connection invalidated|WiFi monitoring stopped|Device Lost|P2PStream Canceled|P2PDirectLink Canceled"; then
+    if echo "$line" | grep -qiE "CWFInterface XPC connection invalidated|WiFi monitoring stopped"; then
         CURRENT_TIME=$(date +%s)
         if (( CURRENT_TIME - LAST_PANIC_TIME < 20 )); then
             continue
