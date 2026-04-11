@@ -29,22 +29,6 @@ log stream --predicate 'subsystem == "com.apple.universalcontrol"' --style syslo
         continue
     fi
     
-    # TIER 2: ORGANIC DROPOUTS (Requires Instant SIGHUP Reconnect to prevent "long pauses")
-    if echo "$line" | grep -qiE "P2PStream Canceled|P2PDirectLink Canceled|Device Lost"; then
-        CURRENT_TIME=$(date +%s)
-        
-        # 30-second debounce to prevent loops on organic drops
-        if (( CURRENT_TIME - LAST_SOFT_TIME < 30 )); then
-            continue
-        fi
-        LAST_SOFT_TIME=$CURRENT_TIME
-        
-        echo "$(date) - [WARNING] Organic Mesh Dropout Detected. Instant Soft-Reconnecting..."
-        
-        # Soft SIGHUP instantly clears the hanging TCP buffer so it snaps back in 2s instead of 30s
-        pkill -HUP UniversalControl 2>/dev/null
-        
-        # Do NOT hard bounce awdl0 here to protect working connections!
-    fi
+
     
 done
